@@ -2,9 +2,10 @@
 #' @param X Design matrix of predictors (n x p)
 #' @param Y Response vector of length n
 #' @param Index_XI Optional vector of indices for parameters of interest. If NULL, they will be selected automatically
+#' @param sigma Random erros sigma, if NULL, it will be estimated as in the paper
 #' @param alpha Significance level for confidence intervals and hypothesis tests (e.g., 0.05)
 
-diffShrinkHDR <- function(X,Y,Index_XI=NULL,alpha){
+diffShrinkHDR <- function(X,Y,Index_XI=NULL,sigma=NULL,alpha){
   n <- nrow(X)
   p <- ncol(X)
   if(is.null(Index_XI))
@@ -104,6 +105,21 @@ diffShrinkHDR <- function(X,Y,Index_XI=NULL,alpha){
   betaI_hat_debiaedNEW <- as.vector(betaI_hat_debiaedNEW)
 
   #Construct confidence intervals for parameters of interest using the new method with debiased estimate;
+  if(is.null(sigma))
+  {
+    M0 <- suppressWarnings(try(glmnet(X,Y, family="gaussian", alpha=1, thresh=1e-15, epsnr=1e-15), silent=TRUE))
+    CVL <- suppressWarnings(try(cv.glmnet(X,Y, family="gaussian", alpha=1, thresh=1e-15, epsnr=1e-15), silent=TRUE))
+    LambdaMinCV <- CVL$lambda.min
+    betahatCV <- suppressWarnings(try(coef(M0, x=X,y=Y, s=LambdaMinCV, exact=TRUE, thresh=1e-15, epsnr=1e-15), silent=TRUE))
+    betahatCV <- betahatCV[-1]
+    Index_XsCV <- which(betahatCV != 0)
+    estimateCV <- betahatCV[Index_XsCV]
+    q <- length(Index_XsCV)
+    Xs <- X[,Index_XsCV]
+    sigma2_hat <- t(Y-Xs%*%c(estimateCV))%*%((Y-Xs%*%c(estimateCV)))/(n-(q+1))
+    sigma2_hat <- max(0,sigma2_hat)
+    sigma <- sqrt(sigma2_hat)
+  }
   alpha <- alpha
   adj_alpha <- alpha/length(betaI_hat_debiaedNEW[Index_XI]) #Bonferroni adjusted multiple CIs
   var_betaI_hat_debiaedNEW <- sigma^2*Q%*%ginv(LAMBDA_eigendecom-n*lambda_1*diag(ncol(XI)))%*%t(Q)
@@ -120,6 +136,7 @@ diffShrinkHDR <- function(X,Y,Index_XI=NULL,alpha){
   }
   return(list(Index_XI=Index_XI,betaI_hat=betaI_hat,betaI_hat_debiaed=betaI_hat_debiaedNEW,betaN_hat=betaN_hat,CI=CI,testpower=testpower))
 }
+
 
 
 
