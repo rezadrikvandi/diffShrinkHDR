@@ -12,8 +12,7 @@ Description: Implements the method proposed in Drikvandi (2025) for high dimensi
     identified via correlation learning. 
     Provides debiased estimates, confidence intervals, and hypothesis tests.
 Depends: 
-    R (>= 3.5.0)
-Imports:
+    R (>= 3.5.0),
     glmnet,
     SIS,
     expm,
