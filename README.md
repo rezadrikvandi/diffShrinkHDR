@@ -20,6 +20,7 @@ diffShrinkHDR(X=as.matrix(testdata[,-1]),Y=c(testdata[,1]),Index_XI=NULL,sigma=N
 
 Here is the output:
 > diffShrinkHDR(X=as.matrix(testdata[,-1]),Y=c(testdata[,1]),Index_XI=NULL,sigma=NULL,alpha=0.05)
+
 $Index_XI
  [1]   1   2   4   5   6   8   9  12  19  32  39  44  56  57  63  71  81  82  87  88 121
 
