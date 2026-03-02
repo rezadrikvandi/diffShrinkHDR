@@ -10,8 +10,14 @@ install_github("rezadrikvandi/diffShrinkHDR")
 
 and then load it using library(diffShrinkHDR)
 
-Details about this package can be found in the DESCRIPTION file. The main R function of the package is called "diffShrinkHDR" which can be applied for estimation and inference with the proposed method for high dimensional data. There is a test data to try (see below for some details). Further details about these data sets can be found in the folder "data" in the package above.
+Details about this package can be found in the DESCRIPTION file. The main R function of the package is called "diffShrinkHDR" which can be applied for estimation and inference with the proposed method for high dimensional data. There is a test data to try, see below for details.
 
-Two examples:
+Example:
 
-Test data: the test data are simulated with n=100 and p=200, where the first column is Y and the others are X. Below is the command to apply the R package to this test data along with the output.
+Test data: the test data are simulated with n=100 and p=200, where the first column is the response Y and the others are covariates X. Below is the command for applying the R package to this test data along with the output:
+
+diffShrinkHDR(X=as.matrix(testdata[,-1]),Y=c(testdata[,1]),Index_XI=NULL,alpha=0.05)
+
+Here is the ourput:
+
+
